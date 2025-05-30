@@ -9,7 +9,7 @@ cd ai-flow
 
 ### 后端安装（目前支持AzureOpenAI）
 ```
-cp .env.local.example api/.env.local
+cp .env.local.example .env.local
 ```
 
 将API信息填入
