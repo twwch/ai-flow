@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Query
 from fastapi.responses import StreamingResponse
 from openai import AzureOpenAI
-from utils.prompt import ClientMessage, convert_to_openai_messages
-from utils.tools import get_current_weather
+from .utils.prompt import ClientMessage, convert_to_openai_messages
+from .utils.tools import get_current_weather
 import uvicorn
 
 load_dotenv(".env.local")

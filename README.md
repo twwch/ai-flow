@@ -22,16 +22,11 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-启动后端
-```
-python index.py
-```
-
-### 前端安装
+### 前端安装(node 18以上)
 
 ```
 pnpm install
-pnpm dev 
+pnpm dev # 会自动启动后端
 ```
 
 访问 http://127.0.0.1:3000, 效果如下
