@@ -31,4 +31,5 @@ pnpm dev # 会自动启动后端
 
 访问 http://127.0.0.1:3000, 效果如下
 
+<img width="1512" alt="image" src="https://github.com/user-attachments/assets/77bd8662-1379-4d7d-851a-1ed6054e08f2" />
 
