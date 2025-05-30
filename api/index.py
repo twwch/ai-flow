@@ -5,17 +5,18 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 from fastapi import FastAPI, Query
 from fastapi.responses import StreamingResponse
-from openai import OpenAI
-from .utils.prompt import ClientMessage, convert_to_openai_messages
-from .utils.tools import get_current_weather
-
+from openai import AzureOpenAI
+from utils.prompt import ClientMessage, convert_to_openai_messages
+from utils.tools import get_current_weather
+import uvicorn
 
 load_dotenv(".env.local")
-
 app = FastAPI()
 
-client = OpenAI(
+client = AzureOpenAI(
+    azure_endpoint=os.environ.get("OPENAI_AZURE_ENDPOINT"),
     api_key=os.environ.get("OPENAI_API_KEY"),
+    api_version=os.environ.get("OPENAI_API_VERSION"),
 )
 
 
@@ -31,7 +32,7 @@ available_tools = {
 def stream_text(messages: List[ClientMessage], protocol: str = 'data'):
     stream = client.chat.completions.create(
         messages=messages,
-        model="gpt-4o",
+        model="gpt-4.1",
         stream=True,
         tools=[{
             "type": "function",
@@ -114,8 +115,11 @@ def stream_text(messages: List[ClientMessage], protocol: str = 'data'):
 
             if chunk.choices == []:
                 usage = chunk.usage
-                prompt_tokens = usage.prompt_tokens
-                completion_tokens = usage.completion_tokens
+                prompt_tokens = 0
+                completion_tokens = 0
+                if usage:
+                    prompt_tokens = usage.prompt_tokens
+                    completion_tokens = usage.completion_tokens
 
                 yield 'd:{{"finishReason":"{reason}","usage":{{"promptTokens":{prompt},"completionTokens":{completion}}}}}\n'.format(
                     reason="tool-calls" if len(
@@ -133,3 +137,7 @@ async def handle_chat_data(request: Request, protocol: str = Query('data')):
     response = StreamingResponse(stream_text(openai_messages, protocol))
     response.headers['x-vercel-ai-data-stream'] = 'v1'
     return response
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
